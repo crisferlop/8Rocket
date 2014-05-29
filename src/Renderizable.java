@@ -3,8 +3,8 @@ import java.awt.Rectangle;
 
 
 public abstract class Renderizable {
-	private int x,y,height,width;
-	private Rectangle rectangle;
+	protected int x,y,height,width;
+	protected Rectangle rectangle;
 	protected static Graphics g;
 
 	public abstract void update();
