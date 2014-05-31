@@ -1,7 +1,10 @@
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -12,6 +15,34 @@ import list.CircularList;
 import list.DListIterator;
 import list.DoubleList;
 
+
+class FPS extends Renderizable{
+	private float fps;
+	private Manager man;
+	private DecimalFormat decimalFormat = new DecimalFormat("0.00");
+	
+	public FPS(Manager pmanager) {
+		// TODO Auto-generated constructor stub
+		man = pmanager;
+		x = 50;
+		y = 50;
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		fps = (man.getLastTime() - man.getFirstTime())/1000000;
+		fps = 1000/fps;
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		g.setColor(Color.WHITE);
+		g.drawString(decimalFormat.format(fps) + " fps", x, y);
+	}
+	
+}
 
 public class Manager extends Renderizable implements Runnable{
 	private DoubleList<Attack> attacks = new DoubleList<>();
@@ -34,10 +65,17 @@ public class Manager extends Renderizable implements Runnable{
 	private CircularList<BufferedImage> background;
 	private CircularIterator<BufferedImage> backgroundIterator;
 	
+	private long firstTime;
+	private long lastTime;
+	private FPS fps;
+	private Graphics doublebuffer;
+	private Image buffer;
+	public final long TIME_WAIT = 17;
 	
 	
 	@SuppressWarnings("static-access")
 	public Manager(Graphics g, JFrame frame) {
+		
 		f = frame;
 		// TODO Auto-generated constructor stub
 		super.g= g;
@@ -111,13 +149,17 @@ public class Manager extends Renderizable implements Runnable{
 		updateAttacks();
 		updateEnemys();
 		actor.update();
+		fps.update();
 	}
 
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub
-		g = f.getGraphics();
 		Toolkit.getDefaultToolkit().sync();
+		buffer = f.createImage(getWidth(), getHeight());
+		doublebuffer = f.getGraphics();
+		
+		g = buffer.getGraphics();
 		g.drawImage(backgroundIterator.getNext(), 0, 0, null);
 		DListIterator<Attack> attacksIterator = attacks.getIterator();
 		DListIterator<Rocket> enemysIterator = enemys.getIterator();
@@ -128,12 +170,17 @@ public class Manager extends Renderizable implements Runnable{
 			enemysIterator.getNext().render();
 		}
 		actor.render();
+		fps.render();
+		doublebuffer.drawImage(buffer, 0, 0, null);
+		doublebuffer.dispose();
 		g.dispose();
 	}
+	
+	
 	public void sleep() {
 		// TODO Auto-generated method stub
 		try {
-			Thread.sleep(20);
+			Thread.sleep(TIME_WAIT);
 		} catch (InterruptedException e) {
 			JOptionPane.showConfirmDialog(null, "Ha Ocurrido un Error");
 			System.exit(0);
@@ -145,14 +192,32 @@ public class Manager extends Renderizable implements Runnable{
 		exec = false;
 	}
 
+	public void iniciarFPS(){
+		fps = new FPS(this);
+	}
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		fps = new FPS(this);
 		while(exec){
+			lastTime = System.nanoTime();
 			update();
 			render();
+			firstTime = System.nanoTime();
 			sleep();
 		}
 	}
-
+	
+	public void stop(){
+		System.out.println("El sistema ha sido cerrado!");
+		exec = false;
+	}
+	
+	public long getFirstTime(){
+		return firstTime;
+	}
+	public long getLastTime(){
+		return lastTime;
+	}
 }
