@@ -1,3 +1,4 @@
+package gui;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -10,9 +11,9 @@ import list.CircularList;
 
 public class AttackConstants {
 	
-	public static String PATH_ATTACK_1 = "gallery/attack1.png";
-	public static String PATH_ATTACK_2 = "gallery/attack2.png";
-	public static String PATH_ATTACK_3 = "gallery/attack3.png";
+	public static String PATH_ATTACK_1 = "/gallery/attack1.png";
+	public static String PATH_ATTACK_2 = "/gallery/attack2.png";
+	public static String PATH_ATTACK_3 = "/gallery/attack3.png";
 	public static BufferedImage ATTACK1;
 	public static BufferedImage ATTACK2;
 	public static BufferedImage ATTACK3;

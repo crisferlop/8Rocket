@@ -1,3 +1,4 @@
+package gui;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -8,8 +9,8 @@ import javax.swing.JOptionPane;
 public class Rocket extends Renderizable{
 	private BufferedImage sprite;
 	private int direction;
-	public static final String PATH = "gallery/rocket.png";
-	public static final String PATH_BAD  = "gallery/enemy.png";
+	public static final String PATH = "/gallery/rocket.png";
+	public static final String PATH_BAD  = "/gallery/enemy.png";
 	
 	
 	public Rocket(int x, int y, boolean bad){
